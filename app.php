@@ -5,22 +5,24 @@
  *
  * Damn Magento, I'll make my own E-commerce platform, with blackjack and API's!
  *
- * TODO: make a bootup
  * TODO: make a module control system.
- * TODO: make a router.
  * TODO: make CLI tester.
+ * TODO: create installation.
  * TODO: create database connection.
  *  - shitty version: serialized arrays in files.
  * TODO: create basic object.
  * TODO: create caching - filebased initially.
+ * TODO: create overwrite functionality.
  * TODO: create bender easter egg.
  *
  * DONE:
+ *  - create a bootup. App::__construct starts the application.
  *  - create an Autoloader.
  *      - autoloader.php.
  *  - create dependency injection.
  *      - Object\Model\ObjectManager handles getting of new object and singleton objects.
- *
+ *  - create a router
+ *      - now router.php. TODO: move this to a separate module.
  */
 
 /**
@@ -32,6 +34,7 @@
  */
 
 require_once './autoload.php';
+require_once './router.php';
 
 $app = new App();
 
@@ -46,6 +49,8 @@ class App
      */
     public function __construct()
     {
+        $router = new Router;
+        $router->route();
         echo '<pre>';
         print_r(new \Object\Model\Object);
     }

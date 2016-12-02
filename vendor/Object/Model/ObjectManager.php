@@ -5,6 +5,8 @@ namespace Object\Model;
 class ObjectManager
 {
 
+    const ERRORCODE_CLASS_NOT_FOUND = 1;
+
     /**
      * Array of singletons in the from of:
      *  array(
@@ -66,7 +68,7 @@ class ObjectManager
          * If the parsed class does not exist, throw an exception to inform the user of this mishap.
          */
         if (!class_exists($namespace)) {
-            throw new \Exception('Class ' . $namespace . ' does not exist!');
+            throw new \Exception('Class ' . $namespace . ' does not exist!', self::ERRORCODE_CLASS_NOT_FOUND);
         }
 
         return $namespace;
