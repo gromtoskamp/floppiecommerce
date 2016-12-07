@@ -45,28 +45,9 @@ $app = new App();
 class App
 {
 
-    private static $test = array();
+    private static $registry = array();
 
-    /**
-     * Register a value (possibly used for rewrites), to be later called back.
-     * These values persist throughout the entire app, but are lost once a call is completed.
-     *
-     * TODO: create a get version of this.
-     * TODO: create a module for this.
-     * TODO: decide what to do with overwrites vs registry.
-     *
-     * @param $key
-     * @param $arg
-     */
-    public static function register($key, $arg)
-    {
-        self::$test[$key] = $arg;
-    }
-
-    public static function rewrite($from, $to)
-    {
-        \Object\Model\ObjectManager::setRewrite($from, $to);
-    }
+    private static $debugger = true;
 
     /**
      * App constructor.
@@ -90,6 +71,57 @@ class App
             print_r($e);
             exit;
         }
+    }
+
+    /**
+     * Get debug mode.
+     *
+     * @return bool
+     */
+    public static function debugger()
+    {
+        return self::$debugger;
+    }
+
+    /**
+     * Set debug mode on the fly.
+     *
+     * @param $mode
+     */
+    public static function setDebugger($mode)
+    {
+        self::$debugger = (bool) $mode;
+    }
+
+    /**
+     * Register a value (possibly used for rewrites), to be later called back.
+     * These values persist throughout the entire app, but are lost once a call is completed.
+     *
+     * TODO: create a module for this.
+     * TODO: decide what to do with overwrites vs registry.
+     *
+     * @param $key
+     * @param $arg
+     */
+    public static function register($key, $arg)
+    {
+        self::$registry[$key] = $arg;
+    }
+
+    /**
+     * Returns the registry value, or false if not set.
+     *
+     * @param $key
+     * @return bool
+     */
+    public static function registry($key)
+    {
+        return isset(self::$registry[$key]) ? self::$registry[$key] : false;
+    }
+
+    public static function rewrite($from, $to)
+    {
+        \Object\Model\ObjectManager::setRewrite($from, $to);
     }
 
     /**
