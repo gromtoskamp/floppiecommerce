@@ -14,7 +14,6 @@ spl_autoload_register( 'autoload' );
  *
  */
 function autoload( $class, $dir = null ) {
-
     /**
      * Basedir to look through
      */
@@ -45,7 +44,9 @@ function autoload( $class, $dir = null ) {
             /**
              * Check if the name of the found class/path is the same as the requested namespace. If so, include it.
              */
-            if ($subdir . str_replace('.php', '', $file) == $class || $subdir . str_replace('.class.php', '', $file) == $class) {
+
+            if (strcasecmp($subdir . str_replace('.php', '', $file), $class) ||
+                strcasecmp($subdir . str_replace('.class.php', '', $file), $class)) {
                 include $dir . $file;
             }
         }

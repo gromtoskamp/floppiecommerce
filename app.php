@@ -6,14 +6,16 @@
  * Damn Magento, I'll make my own E-commerce platform, with blackjack and API's!
  *
  * TODO: make a module control system.
- * TODO: make CLI tester.
+ *  - config.json files to declare, gets smashed together and validated
+ *  - add dependencies in modulecontrol module, to make sure all required modules are active.
+ * TODO: make CLI.
  * TODO: create installation.
  * TODO: create database connection.
  *  - shitty version: serialized arrays in files.
- * TODO: create basic object.
  * TODO: create caching - filebased initially.
- * TODO: create overwrite functionality.
+ * TODO: create overwrite/rewrite functionality.
  * TODO: create bender easter egg.
+ * TODO: A/B tester!
  *
  * DONE:
  *  - create a bootup. App::__construct starts the application.
@@ -22,7 +24,7 @@
  *  - create dependency injection.
  *      - Object\Model\ObjectManager handles getting of new object and singleton objects.
  *  - create a router
- *      - now router.php. TODO: move this to a separate module.
+ *      - now router.php. TODO: possibly move this to a separate module.
  */
 
 /**
@@ -34,7 +36,6 @@
  */
 
 require_once './autoload.php';
-require_once './router.php';
 
 $app = new App();
 
@@ -44,15 +45,59 @@ $app = new App();
 class App
 {
 
+    private static $test = array();
+
+    /**
+     * Register a value (possibly used for rewrites), to be later called back.
+     * These values persist throughout the entire app, but are lost once a call is completed.
+     *
+     * TODO: create a get version of this.
+     * TODO: create a module for this.
+     * TODO: decide what to do with overwrites vs registry.
+     *
+     * @param $key
+     * @param $arg
+     */
+    public static function register($key, $arg)
+    {
+        self::$test[$key] = $arg;
+    }
+
+    public static function rewrite($from, $to)
+    {
+        \Object\Model\ObjectManager::setRewrite($from, $to);
+    }
+
     /**
      * App constructor.
      */
     public function __construct()
     {
-        $router = new Router;
-        $router->route();
-        echo '<pre>';
-        print_r(new \Object\Model\Object);
+        /**
+         * Gather module init.php files.
+         */
+        $this->getInitFiles();
+
+        /**
+         * Send the request to the router.
+         */
+        $router = new \Router\Controller\Router;
+        try {
+            $router->route();
+        } catch (\Exception $e) {
+            //TODO: Create an actual general exception handler.
+            echo '<pre>';
+            print_r($e);
+            exit;
+        }
+    }
+
+    /**
+     * Gather init files and load these up, allowing modules to register themselves.
+     */
+    public function getInitFiles()
+    {
+        require_once './init.php';
     }
 }
 

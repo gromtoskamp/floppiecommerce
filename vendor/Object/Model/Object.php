@@ -18,6 +18,11 @@ class Object
         $this->objectManager = new ObjectManager;
     }
 
+    public function __get($get)
+    {
+        echo 'we get here, gettit?';
+    }
+
     /**
      * Passes the handling of creating a new object to the objectmanager.
      *
