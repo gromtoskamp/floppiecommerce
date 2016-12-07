@@ -19,15 +19,38 @@ class Declarations
      ************************************************************************************************************/
 
     /**
+     * 100
      * Class not found.
      */
-    const ERROR_OBJECT_CLASS_NOT_FOUND_CODE = '100';
-    const ERROR_OBJECT_CLASS_NOT_FOUND_MESSAGE = 'Class %s does not exist!';
+    const ERROR_CLASS_NOT_FOUND_CODE = '100';
+    const ERROR_CLASS_NOT_FOUND = 'Class %s does not exist!';
 
     /**
+     * 101
      * Double rewrite.
      */
-    const ERROR_OBJECT_DOUBLE_REWRITE_CODE = '101';
-    const ERROR_OBJECT_DOUBLE_REWRITE_MESSAGE = 'Double rewrite found for object %s! Rerwrite requested: %s, Rewrite found: %s.';
+    const ERROR_DOUBLE_REWRITE_CODE = '101';
+    const ERROR_DOUBLE_REWRITE = 'Double rewrite found for object %s! Rerwrite requested: %s, Rewrite found: %s.';
+
+    /**
+     * 102
+     * Function not found.
+     */
+    const ERROR_UNDEFINED_FUNCTION_CODE = '102';
+    const ERROR_UNDEFINED_FUNCTION = 'Function %s does not exist!';
+
+    /**
+     * 103
+     * Magic method undefined.
+     */
+    const ERROR_MAGIC_METHOD_UNDEFINED_CODE = '103';
+    const ERROR_MAGIC_METHOD_UNDEFINED = 'Magic method %s undefined!';
+
+    /**
+     * 104S
+     * Strict magic method failure.
+     */
+    const ERROR_STRICT_MAGIC_FUNCTION_CALL_CODE = '104';
+    const ERROR_STRICT_MAGIC_FUNCTION = 'Strict magic function validation failed. Data index %s called, but not found! Did you mean one of the following indices?';
 
 }

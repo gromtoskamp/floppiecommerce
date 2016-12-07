@@ -23,11 +23,18 @@ class Router extends \Object\Model\Object
 
     /**
      * Routing function.
+     *
+     * Currently only works with GET.
+     *
+     * TODO: make this work with POST, PUT, and DELETE.
+     * TODO: create a request object that will be passed to the actual controller.
+     * TODO: return a response object.
+     *  TODO: determine if the response object should be the View part of the MVC pattern.
      */
     public function route()
     {
         echo '<pre>';
-        print_r($this->getNew('\Object\Model\Test'));
+        print_r($this->getNew('\Router\Model\Request'));
         exit;
 
         /**
@@ -55,7 +62,8 @@ class Router extends \Object\Model\Object
             /**
              * If we get a class_not_found exception, redirect to 404.
              */
-            if($e->getCode() == \Object\Declarations::ERROR_OBJECT_CLASS_NOT_FOUND_CODE) {
+            if($e->getCode() == \Object\Declarations::ERROR_CLASS_NOT_FOUND_CODE) {
+                print_r('TODO: CREATE A SPECIFIC EXCEPTION');
                 if (!$this->debugRoute) {
                     $this->redirect404();
                 }

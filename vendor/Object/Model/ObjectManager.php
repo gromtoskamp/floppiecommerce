@@ -92,8 +92,8 @@ class ObjectManager
          */
         if (!class_exists($namespace)) {
             throw new \Exception(
-                sprintf(\Object\Declarations::ERROR_OBJECT_CLASS_NOT_FOUND_MESSAGE, $namespace),
-                \Object\Declarations::ERROR_OBJECT_CLASS_NOT_FOUND_CODE
+                sprintf(\Object\Declarations::ERROR_CLASS_NOT_FOUND, $namespace),
+                \Object\Declarations::ERROR_CLASS_NOT_FOUND_CODE
             );
         }
 
@@ -116,11 +116,11 @@ class ObjectManager
         if (isset(self::$rewrites[$from])) {
             throw new \Exception(
                 sprintf(
-                    \Object\Declarations::ERROR_OBJECT_DOUBLE_REWRITE_MESSAGE,
+                    \Object\Declarations::ERROR_DOUBLE_REWRITE,
                     $from,
                     $to,
                     self::$rewrites[$from]),
-                \Object\Declarations::ERROR_OBJECT_DOUBLE_REWRITE_CODE
+                \Object\Declarations::ERROR_DOUBLE_REWRITE_CODE
             );
         }
 
