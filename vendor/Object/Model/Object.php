@@ -77,8 +77,12 @@ class Object
      * @return mixed
      * @throws \Exception
      */
-    public function get($index, $strict = false)
+    public function get($index = null, $strict = false)
     {
+        if ($index == null) {
+            return $this->data;
+        }
+
         /**
          * If strict parameter is provided, validate if the index is present in $data.
          */
