@@ -23,6 +23,7 @@ class Object
         'uns',
         'has',
         'set',
+        'add',
     );
 
     /**
@@ -120,6 +121,46 @@ class Object
     }
 
     /**
+     * Adds a value to an array in $data.
+     * When strict is set to true, will throw an Exception if the value is not yet set already.
+     *
+     * @param $index
+     * @param null $value
+     * @param bool $strict
+     * @return $this
+     * @throws \Exception
+     */
+    public function add($index, $value = null, $strict = false)
+    {
+        /**
+         * If strict parameter is provided, validate if the index is present in $data.
+         */
+        if ($strict == true && !$this->has($index)) {
+            $this->validate($index);
+        }
+
+        /**
+         * If the value is null, create an array under $index with initial value $value.
+         * If the value is not an array and not null, throw an Exception.
+         */
+        $indexValue = $this->has($index) ? $this->get($index) : array();
+        if (!is_array($value)) {
+            throw new \Exception(
+                sprintf(\Object\Declarations::ERROR_ADD_VALUE_NOT_ARRAY, $index),
+                \Object\Declarations::ERROR_ADD_VALUE_NOT_ARRAY_CODE
+            );
+        }
+
+        /**
+         * Merge the new value to the already set value, and set that on the object.
+         */
+        $indexValue = array_merge_recursive($indexValue, $value);
+        $this->set($index, $indexValue);
+
+        return $this;
+    }
+
+    /**
      * Resets the value of an index in $data to null.
      * When strict is set to true, will throw an Exception if the value is not set.
      *
@@ -149,7 +190,32 @@ class Object
      */
     public function has($index)
     {
+        if (is_array($index)) {
+            return $this->hasRecursive($index);
+        }
+
         return isset($this->data[$index]);
+    }
+
+    /**
+     * Checks recursively if a value is set.
+     * Walks through all items in $indexArray,
+     * and checks if the item is present as an index in the previous index' value.
+     *
+     * @param array $indexArray
+     * @return bool
+     */
+    public function hasRecursive(array $indexArray)
+    {
+        $dataObject = $this->get();
+        foreach ($indexArray as $index) {
+            if (!isset($dataObject[$index])) {
+                return false;
+            }
+            $dataObject = $dataObject[$index];
+        }
+
+        return true;
     }
 
     /**

@@ -47,10 +47,17 @@ class Declarations
     const ERROR_MAGIC_METHOD_UNDEFINED = 'Magic method %s undefined!';
 
     /**
-     * 104S
+     * 104
      * Strict magic method failure.
      */
     const ERROR_STRICT_MAGIC_FUNCTION_CALL_CODE = '104';
     const ERROR_STRICT_MAGIC_FUNCTION = 'Strict magic function validation failed. Data index %s called, but not found! Did you mean one of the following indices?';
+
+    /**
+     * 105
+     * Add value not an array.
+     */
+    const ERROR_ADD_VALUE_NOT_ARRAY_CODE = '105';
+    const ERROR_ADD_VALUE_NOT_ARRAY = 'Value of %s is not an array!';
 
 }

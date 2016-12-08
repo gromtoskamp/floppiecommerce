@@ -36,7 +36,7 @@ class Request extends Object
     public function parseRequestParams()
     {
         /**
-         * If the Request method is not in the list of supported Request methods,
+         * If the Request method is not in the list of supported request methods,
          * throw an Exception.
          */
         if (!in_array($_SERVER['REQUEST_METHOD'], $this->methods)) {
@@ -52,12 +52,16 @@ class Request extends Object
          */
         $params = $this->getRequestParams();
         foreach ($params as $index => $value) {
-            $this->set($index, $value);
+            $this->add('requestParams', array($index => $value));
         }
+
+        return $this;
     }
 
     /**
      * Depending on the request method, get the parameters in different ways.
+     *
+     * TODO: add handling of XML and JSON bodies.
      *
      * @return mixed
      */
@@ -70,6 +74,7 @@ class Request extends Object
             case 'POST':
                 $params = $_POST;
                 break;
+            /** Default case for PUT and DELETE */
             default:
                 parse_str(file_get_contents("php://input"),$post_vars);
                 $params =  $post_vars;

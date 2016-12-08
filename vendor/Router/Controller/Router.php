@@ -24,17 +24,15 @@ class Router extends \Object\Model\Object
     /**
      * Routing function.
      *
-     * Currently only works with GET.
+     * Currently only works with GET, POST, PUT, DELETE.
      *
-     * TODO: make this work with POST, PUT, and DELETE.
-     * TODO: create a request object that will be passed to the actual controller.
+     * TODO: Pass request object to the controller.
      * TODO: return a response object.
-     *  TODO: determine if the response object should be the View part of the MVC pattern.
      */
     public function route()
     {
-        echo '<pre>';
-        print_r($this->getNew('\Router\Model\Request'));
+        $request = $this->getSingleton('\Router\Model\Request');
+        print_r($request);
         exit;
 
         /**
