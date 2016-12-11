@@ -13,7 +13,8 @@ spl_autoload_register( 'autoload' );
  * TODO: handle when ./vendor/ is not the basedir.
  *
  */
-function autoload( $class, $dir = null ) {
+function autoload( $class, $dir = null )
+{
     /**
      * Basedir to look through
      */
@@ -22,12 +23,13 @@ function autoload( $class, $dir = null ) {
     if ( is_null( $dir ) )
         $dir = $basedir;
 
-    foreach (scandir($dir) as $file) {
 
+    foreach (scandir($dir) as $file) {
         /**
          * If this is a directory, check recursively for files.
          */
-        if (is_dir($dir . $file) && substr($file, 0, 1) !== '.') {
+        if (is_dir($dir . $file)
+            && substr($file, 0, 1) !== '.') {
             autoload($class, $dir . $file . '/');
         }
 
@@ -44,9 +46,9 @@ function autoload( $class, $dir = null ) {
             /**
              * Check if the name of the found class/path is the same as the requested namespace. If so, include it.
              */
+            if (strcasecmp($subdir . str_replace('.php', '', $file), $class) == 0||
+                strcasecmp($subdir . str_replace('.class.php', '', $file), $class) == 0) {
 
-            if (strcasecmp($subdir . str_replace('.php', '', $file), $class) ||
-                strcasecmp($subdir . str_replace('.class.php', '', $file), $class)) {
                 include $dir . $file;
             }
         }
