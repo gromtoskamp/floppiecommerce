@@ -54,10 +54,7 @@ class App
      */
     public function __construct()
     {
-        /**
-         * Gather module init.php files.
-         */
-        $this->getInitFiles();
+        $this->bootup();
 
         /**
          * Send the request to the router.
@@ -71,6 +68,14 @@ class App
             print_r($e);
             exit;
         }
+    }
+
+    private function bootup()
+    {
+        /**
+         * Gather module init.php files.
+         */
+        $this->getInitFiles();
     }
 
     /**
