@@ -16,6 +16,7 @@
  * TODO: create overwrite/rewrite functionality.
  * TODO: create bender easter egg.
  * TODO: A/B tester!
+ * TODO: Search bar that can search through categories/subcategories.
  *
  * DONE:
  *  - create a bootup. App::__construct starts the application.
