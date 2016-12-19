@@ -16,6 +16,7 @@
  * TODO: create overwrite/rewrite functionality.
  * TODO: create bender easter egg.
  * TODO: A/B tester!
+ * TODO: Search bar that can search through categories/subcategories.
  *
  * DONE:
  *  - create a bootup. App::__construct starts the application.
@@ -54,10 +55,7 @@ class App
      */
     public function __construct()
     {
-        /**
-         * Gather module init.php files.
-         */
-        $this->getInitFiles();
+        $this->bootup();
 
         /**
          * Send the request to the router.
@@ -71,6 +69,14 @@ class App
             print_r($e);
             exit;
         }
+    }
+
+    private function bootup()
+    {
+        /**
+         * Gather module init.php files.
+         */
+        $this->getInitFiles();
     }
 
     /**
