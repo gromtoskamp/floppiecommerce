@@ -114,11 +114,11 @@ class Request extends Object
      */
     public function getRequestUri()
     {
-        if (!isset($this->requestUri)) {
-            $this->requestUri = $_SERVER['REQUEST_URI'];
+        if (!$this->hasRequestUri()) {
+            $this->addRequestHeaders(['requestUri' => $_SERVER['REQUEST_URI']]);
         }
 
-        return $this->requestUri;
+        return $this->getRequestUri();
     }
 
     /**
@@ -128,11 +128,11 @@ class Request extends Object
      */
     public function getRequestMethod()
     {
-        if (!isset($this->requestMethod)) {
-            $this->requestMethod = $_SERVER['REQUEST_METHOD'];
+        if (!$this->hasRequestMethod()) {
+            $this->addRequestHeaders(['requestMethod' => $_SERVER['REQUEST_METHOD']]);
         }
 
-        return $this->requestMethod;
+        return $this->getRequestMethod();
     }
 
     /**
@@ -142,11 +142,11 @@ class Request extends Object
      */
     public function getHttpContentType()
     {
-        if (!isset($this->httpContentType)) {
-            $this->httpContentType = $_SERVER['HTTP_CONTENT_TYPE'];
+        if (!$this->hasHttpContentType()) {
+            $this->addRequestHeaders(['httpContentType' => $_SERVER['HTTP_CONTENT_TYPE']]);
         }
 
-        return $this->httpContentType;
+        return $this->getHttpContentType();
     }
 
     /**
@@ -156,11 +156,11 @@ class Request extends Object
      */
     public function getHttpCacheControl()
     {
-        if (!isset($this->httpCacheControl)) {
-            $this->httpCacheControl = $_SERVER['HTTP_CACHE_CONTROL'];
+        if (!$this->hasHttpCacheControl()) {
+            $this->addRequestHeaders(['httpCacheControl '=> $_SERVER['HTTP_CACHE_CONTROL']]);
         }
 
-        return $this->httpCacheControl;
+        return $this->getHttpCacheControl();
     }
 
     /**
