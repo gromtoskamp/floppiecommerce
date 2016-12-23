@@ -5,6 +5,8 @@ namespace Object\Model;
 class Object
 {
 
+    const REALLY_EMPTY = '"\(シ)/"';
+
     /**
      * @var \Object\Model\ObjectManager ObjectManager
      */
@@ -58,7 +60,7 @@ class Object
         array_unshift($arguments, lcfirst($index));
         if (!in_array($functionName, $this->magicMethods)) {
             throw new \Exception(
-                \Object\Declarations::ERROR_MAGIC_METHOD_UNDEFINED,
+                sprintf(\Object\Declarations::ERROR_MAGIC_METHOD_UNDEFINED, $name),
                 \Object\Declarations::ERROR_MAGIC_METHOD_UNDEFINED_CODE
             );
         }
@@ -70,50 +72,57 @@ class Object
     }
 
     /**
-     * Returns a value magically, or false if the requested value is not set.
-     * When strict is set to true, will throw an Exception if the value is not set.
+     * Supermagic method alert!
      *
-     * @param $index
-     * @param bool $strict
-     * @return mixed
-     * @throws \Exception
+     * This magicey method will try to get the value from the data array.
+     * If this value is not present, it will try to call the provided index as a function.
+     *
+     * This function can be placed in the class of the object, where it will only
+     * need to return the value of what should be set, if nothing is set yet.
+     *
+     * @param null $index
+     * @return array|bool
      */
-    public function get($index = null, $strict = false)
+    public function get($index = null, $refresh = false)
     {
+        /**
+         * If no index is provided, return the entire data array.
+         */
         if ($index == null) {
             return $this->data;
         }
 
         /**
-         * If strict parameter is provided, validate if the index is present in $data.
+         * If we don't already have index, check if we can generate it.
+         * If so, set it on the object, otherwise return false.
          */
-        if ($strict == true && !$this->has($index)) {
-            $this->validate($index);
+        if (!$this->has($index) || $refresh) {
+            if (method_exists($this, $index)) {
+                $this->set($index, $this->$index());
+            } else {
+                return false;
+            }
         }
 
         /**
-         * Return the set value, or false if not set.
+         * Return the index from the data array.
          */
-        return $this->has($index) ? $this->data[$index] : false;
+        return $this->data[$index];
     }
 
     /**
      * Sets the value of an index in $data.
-     * When strict is set to true, will throw an Exception if the value is not yet set already.
+     * TODO: add description of this weird-ass construction.
      *
      * @param $index
-     * @param null $value
-     * @param bool $strict
+     * @param null $foo
+     * @param null $bar
      * @return $this
-     * @throws \Exception
      */
-    public function set($index, $value = null, $strict = false)
+    public function set($index, $value = self::REALLY_EMPTY)
     {
-        /**
-         * If strict parameter is provided, validate if the index is present in $data.
-         */
-        if ($strict == true && !$this->has($index)) {
-            $this->validate($index);
+        if ($value == self::REALLY_EMPTY) {
+            $value = method_exists($this, $index) ? $this->$index() : null;
         }
 
         $this->data[$index] = $value;
@@ -130,7 +139,7 @@ class Object
      * @return $this
      * @throws \Exception
      */
-    public function add($index, $value = null, $strict = false)
+    public function add($index, $value = null, $strict = null)
     {
         /**
          * If strict parameter is provided, validate if the index is present in $data.
@@ -190,10 +199,18 @@ class Object
      */
     public function has($index)
     {
+        /**
+         * If provided with an array,
+         * check recursively if we can find the next index
+         * as a child of the current index.
+         */
         if (is_array($index)) {
             return $this->hasRecursive($index);
         }
 
+        /**
+         * Otherwise just check if is set.
+         */
         return isset($this->data[$index]);
     }
 
