@@ -37,13 +37,15 @@ class ObjectManager
     }
 
     /**
-     * Gets the singleton class defined in $namespace,
-     * or the rewrite of this $namespace.
+     * Gets an instance of an object,
+     * identifiable by both classname and possibly provided id.
      *
      * @param $class
+     * @param int $id
      * @return mixed
+     * @throws \Exception
      */
-    public function getSingleton($class)
+    public function getInstance($class, $id = 0)
     {
         /**
          * Parse the namespace for rewrite and validation purposes.
@@ -54,8 +56,8 @@ class ObjectManager
          * If the Singleton is not already set,
          * get a new instance of the singleton object, and save it in the $singletons array.
          */
-        if (!isset($this->singletons[$class])) {
-            $this->singletons[$class] = $this->create($class);
+        if (!$this->singletons[$class][$id]) {
+            $this->singletons[$class][$id] = $this->create($class);
         }
 
         /**
