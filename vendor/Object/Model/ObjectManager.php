@@ -40,7 +40,7 @@ class ObjectManager
      * Gets the singleton class defined in $namespace,
      * or the rewrite of this $namespace.
      *
-     * @param $namespace
+     * @param $class
      * @return mixed
      */
     public function getSingleton($class)
@@ -68,7 +68,7 @@ class ObjectManager
      * Function that parses a namespace, checks for potential rewrites and return either the
      * (rewritten) namespace or an exception.
      *
-     * @param $namespace
+     * @param $class
      * @return string
      * @throws \Exception
      */
