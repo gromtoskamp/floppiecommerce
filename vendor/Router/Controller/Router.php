@@ -6,6 +6,7 @@ namespace Router\Controller;
  * Class Router
  *
  * TODO: add 404 route.
+ * TODO: add SOAP.
  *
  */
 class Router extends \Object\Model\Object
@@ -21,6 +22,8 @@ class Router extends \Object\Model\Object
      */
     protected $debugRoute = true;
 
+    public $request;
+
     /**
      * Routing function.
      *
@@ -31,10 +34,6 @@ class Router extends \Object\Model\Object
      */
     public function route()
     {
-        $request = $this->getSingleton('\Router\Model\Request');
-        print_r($request);
-        exit;
-
         /**
          * Homepage routing.
          */
@@ -54,6 +53,7 @@ class Router extends \Object\Model\Object
          * Load the controller class and call the action on this class.
          */
         try {
+            $controller = $this->getController();
             $controller = $this->getSingleton("$module\\Controller\\$file");
             $controller->$action();
         } catch (\Exception $e) {
@@ -61,7 +61,8 @@ class Router extends \Object\Model\Object
              * If we get a class_not_found exception, redirect to 404.
              */
             if($e->getCode() == \Object\Declarations::ERROR_CLASS_NOT_FOUND_CODE) {
-                print_r('TODO: CREATE A SPECIFIC EXCEPTION');
+                print_r('TODO: CREATE A SPECIFIC EXCEPTION FOR NO ROUTE FOUND.');
+                exit;
                 if (!$this->debugRoute) {
                     $this->redirect404();
                 }
@@ -72,6 +73,25 @@ class Router extends \Object\Model\Object
              */
             throw new \Exception($e->getMessage(), $e->getCode(), $e);
         }
+    }
+
+    public function getRequest()
+    {
+        if (!isset($this->request)) {
+            $this->request = $this->getSingleton('\Router\Model\Request');
+        }
+
+        return $this->request;
+    }
+
+    /**
+     *
+     */
+    public function getController()
+    {
+        $module = '';
+        $file = '';
+        return $this->getSingleton("$module\\Controller\\$file");
     }
 
     /**
