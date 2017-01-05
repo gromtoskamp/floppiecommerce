@@ -72,16 +72,15 @@ class Object
     }
 
     /**
-     * Supermagic method alert!
-     *
      * This magicey method will try to get the value from the data array.
      * If this value is not present, it will try to call the provided index as a function.
      *
      * This function can be placed in the class of the object, where it will only
      * need to return the value of what should be set, if nothing is set yet.
      *
-     * @param null $index
-     * @return array|bool
+     * @param $index
+     * @return mixed
+     * @throws \Exception
      */
     public function get($index = null, $refresh = false)
     {
@@ -131,23 +130,14 @@ class Object
 
     /**
      * Adds a value to an array in $data.
-     * When strict is set to true, will throw an Exception if the value is not yet set already.
      *
      * @param $index
      * @param null $value
-     * @param bool $strict
      * @return $this
      * @throws \Exception
      */
-    public function add($index, $value = null, $strict = null)
+    public function add($index, $value = null)
     {
-        /**
-         * If strict parameter is provided, validate if the index is present in $data.
-         */
-        if ($strict == true && !$this->has($index)) {
-            $this->validate($index);
-        }
-
         /**
          * If the value is null, create an array under $index with initial value $value.
          * If the value is not an array and not null, throw an Exception.
@@ -171,22 +161,13 @@ class Object
 
     /**
      * Resets the value of an index in $data to null.
-     * When strict is set to true, will throw an Exception if the value is not set.
      *
      * @param $index
-     * @param bool $strict
      * @return $this
      * @throws \Exception
      */
-    public function uns($index, $strict = false)
+    public function uns($index)
     {
-        /**
-         * If strict parameter is provided, validate if the index is present in $data.
-         */
-        if ($strict == true && !$this->has($index)) {
-            $this->validate($index);
-        }
-
         $this->data[$index] = null;
         return $this;
     }
@@ -233,23 +214,6 @@ class Object
         }
 
         return true;
-    }
-
-    /**
-     * Throw an Exception if index is not set in $data.
-     *
-     * @param $index
-     * @throws \Exception
-     */
-    public function validate($index)
-    {
-        $message = sprintf(\Object\Declarations::ERROR_STRICT_MAGIC_FUNCTION, $index) . PHP_EOL .
-            implode(' -=- ', array_keys($this->data));
-
-        throw new \Exception(
-            $message,
-            \Object\Declarations::ERROR_STRICT_MAGIC_FUNCTION_CALL_CODE
-        );
     }
 
     /**
