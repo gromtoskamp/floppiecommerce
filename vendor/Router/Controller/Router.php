@@ -44,17 +44,16 @@ class Router extends \Object\Model\Object
         /**
          * Get the URI and explode it from the base url, leaving only usable parts.
          */
-        $uri = explode('/', $_SERVER['REQUEST_URI']);
-        $module = ucfirst($uri[1]);
-        $file = ucfirst($uri[2]);
-        $action = ucfirst(isset($uri[3]) ? $uri[3] : 'index');
+        $uri        = explode('/', $_SERVER['REQUEST_URI']);
+        $module     = ucfirst($uri[1]);
+        $controller = ucfirst(isset($uri[2]) ? $uri[2] : 'index');
+        $action     = ucfirst(isset($uri[3]) ? $uri[3] : 'index');
 
         /**
          * Load the controller class and call the action on this class.
          */
         try {
-            $controller = $this->getController();
-            $controller = $this->getSingleton("$module\\Controller\\$file");
+            $controller = $this->getController($module, $controller);
             $controller->$action();
         } catch (\Exception $e) {
             /**
@@ -87,11 +86,9 @@ class Router extends \Object\Model\Object
     /**
      *
      */
-    public function getController()
+    public function getController($module, $controller)
     {
-        $module = '';
-        $file = '';
-        return $this->getSingleton("$module\\Controller\\$file");
+        return $this->getSingleton("$module\\Controller\\$controller");
     }
 
     /**
