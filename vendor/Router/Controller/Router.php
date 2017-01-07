@@ -82,7 +82,7 @@ class Router extends \Object\Model\Object
     public function getRequest()
     {
         if (!isset($this->request)) {
-            $this->request = $this->getSingleton('\Router\Model\Request');
+            $this->request = $this->getInstance('\Router\Model\Request');
         }
 
         return $this->request;
@@ -93,7 +93,7 @@ class Router extends \Object\Model\Object
      */
     public function getController($module, $controller)
     {
-        return $this->getSingleton("$module\\Controller\\$controller");
+        return $this->getInstance("$module\\Controller\\$controller");
     }
 
     /**
