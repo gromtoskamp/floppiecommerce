@@ -39,7 +39,7 @@ class ObjectManager
      * @return mixed
      * @throws \Exception
      */
-    public function getNew($class)
+    public function create($class)
     {
         /**
          * Parse the namespace for rewrite and validation purposes.
@@ -57,9 +57,11 @@ class ObjectManager
      * or the rewrite of this $class.
      *
      * @param $class
+     * @param int $id
      * @return mixed
+     * @throws \Exception
      */
-    public function getSingleton($class)
+    public function getInstance($class, $id = 0)
     {
         /**
          * Parse the namespace for rewrite and validation purposes.
@@ -70,8 +72,8 @@ class ObjectManager
          * If the Singleton is not already set,
          * get a new instance of the singleton object, and save it in the $singletons array.
          */
-        if (!isset($this->singletons[$class])) {
-            $this->singletons[$class] = $this->getNew($class);
+        if (!isset($this->singletons[$class][$id])) {
+            $this->singletons[$class][$id] = $this->create($class);
         }
 
         /**

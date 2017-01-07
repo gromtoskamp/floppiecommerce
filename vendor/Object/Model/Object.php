@@ -152,7 +152,7 @@ class Object
      * @return $this
      * @throws \Exception
      */
-    public function add($index, $value = null, $strict = null)
+    public function add($index, $value = null)
     {
         /**
          * If strict parameter is provided, validate if the index is present in $data.
@@ -249,32 +249,15 @@ class Object
     }
 
     /**
-     * Throw an Exception if index is not set in $data.
-     *
-     * @param $index
-     * @throws \Exception
-     */
-    public function validate($index)
-    {
-        $message = sprintf(\Object\Declarations::ERROR_STRICT_MAGIC_FUNCTION, $index) . PHP_EOL .
-            implode(' -=- ', array_keys($this->data));
-
-        throw new \Exception(
-            $message,
-            \Object\Declarations::ERROR_STRICT_MAGIC_FUNCTION_CALL_CODE
-        );
-    }
-
-    /**
      * Passes the handling of creating a new object to the objectmanager.
      *
-     * @param $namespace
+     * @param class
      * @return mixed
      * @throws \Exception
      */
-    public function getNew($namespace)
+    public function create($class)
     {
-        return $this->objectManager->getNew($namespace);
+        return $this->objectManager->create($class);
     }
 
     /**
@@ -283,9 +266,9 @@ class Object
      * @param $namespace
      * @return mixed
      */
-    public function getSingleton($namespace)
+    public function getInstance($class)
     {
-        return $this->objectManager->getSingleton($namespace);
+        return $this->objectManager->getInstance($class);
     }
 
     public function debug($object)
