@@ -2,6 +2,9 @@
 
 namespace Router\Controller;
 
+use Object\Model\ObjectManager;
+use Router\Model\Request;
+
 /**
  * Class Router
  *
@@ -34,6 +37,8 @@ class Router extends \Object\Model\Object
      */
     public function route()
     {
+        $request = $this->getInstance(Request::class);
+
         /**
          * Homepage routing.
          */
