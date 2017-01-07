@@ -3,11 +3,14 @@
 namespace Router\Controller;
 
 use Object\Model\ObjectManager;
+use Router\Model\Request;
 
 /**
  * Class Router
  *
  * TODO: add 404 route.
+ * TODO: add SOAP.
+ * TODO: refactor routes to take params directly.
  *
  */
 class Router extends \Object\Model\Object
@@ -23,6 +26,8 @@ class Router extends \Object\Model\Object
      */
     protected $debugRoute = true;
 
+    public $request;
+
     /**
      * Routing function.
      *
@@ -33,9 +38,7 @@ class Router extends \Object\Model\Object
      */
     public function route()
     {
-        $request = $this->getInstance('\Router\Model\Request');
-        print_r($request);
-        exit;
+        $request = $this->getInstance(Request::class);
 
         /**
          * Homepage routing.
@@ -47,16 +50,16 @@ class Router extends \Object\Model\Object
         /**
          * Get the URI and explode it from the base url, leaving only usable parts.
          */
-        $uri = explode('/', $_SERVER['REQUEST_URI']);
-        $module = ucfirst($uri[1]);
-        $file = ucfirst($uri[2]);
-        $action = ucfirst(isset($uri[3]) ? $uri[3] : 'index');
+        $uri        = explode('/', $_SERVER['REQUEST_URI']);
+        $module     = ucfirst($uri[1]);
+        $controller = ucfirst(isset($uri[2]) ? $uri[2] : 'index');
+        $action     = ucfirst(isset($uri[3]) ? $uri[3] : 'index');
 
         /**
          * Load the controller class and call the action on this class.
          */
         try {
-            $controller = $this->getInstance("$module\\Controller\\$file");
+            $controller = $this->getController($module, $controller);
             $controller->$action();
         } catch (\Exception $e) {
             /**
@@ -74,6 +77,23 @@ class Router extends \Object\Model\Object
              */
             throw new \Exception($e->getMessage(), $e->getCode(), $e);
         }
+    }
+
+    public function getRequest()
+    {
+        if (!isset($this->request)) {
+            $this->request = $this->getSingleton('\Router\Model\Request');
+        }
+
+        return $this->request;
+    }
+
+    /**
+     *
+     */
+    public function getController($module, $controller)
+    {
+        return $this->getSingleton("$module\\Controller\\$controller");
     }
 
     /**

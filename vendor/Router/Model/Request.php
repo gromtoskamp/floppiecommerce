@@ -40,28 +40,67 @@ class Request extends Object
     const CONTENT_TYPE_JSON = 'application/json';
 
     /**
-     * Property stating the request method of the request.
-     * @var string
+     * @builder
+     *
+     * @return mixed
      */
-    protected $requestMethod;
+    public function requestUri()
+    {
+        return $_SERVER['REQUEST_URI'];
+    }
 
     /**
-     * Property stating the http content type of the request.
-     * @var string
+     * @builder
+     *
+     * @return mixed
      */
-    protected $httpContentType;
+    public function requestMethod()
+    {
+        return $_SERVER['REQUEST_METHOD'];
+    }
 
     /**
-     * Property stating the request uri of the request.
-     * @var string
+     * @builder
+     *
+     * @return mixed
      */
-    protected $requestUri;
+    public function httpContentType()
+    {
+        return $_SERVER['HTTP_CONTENT_TYPE'];
+    }
 
     /**
-     * Property stating the http cache control of the request.
-     * @var string
+     * @builder
+     *
+     * @return mixed
      */
-    protected $httpCacheControl;
+    public function httpCacheControl()
+    {
+        return $_SERVER['HTTP_CACHE_CONTROL'];
+    }
+
+    /**
+     * @builder wrapper
+     *
+     * @return mixed
+     */
+    public function requestHeaders()
+    {
+        return $this->setRequestUri()
+                    ->setRequestMethod()
+                    ->setHttpContentType()
+                    ->setHttpCacheControl();
+    }
+
+    /**
+     * @builder
+     *
+     * @return Request\Params
+     */
+    public function requestParams()
+    {
+        return new Request\Params(['test' => true]);
+    }
 
     /**
      * Request constructor.
@@ -91,12 +130,14 @@ class Request extends Object
             );
         }
 
-        $this->parseRequestHeaders();
+        $this->requestHeaders();
 
         /**
          * Get the request parameters.
          * Map the parameters to the data array.
          */
+        $this->setRequestParams();
+
         $params = $this->getRequestParams();
 
         foreach ($params as $index => $value) {
@@ -106,69 +147,17 @@ class Request extends Object
         return $this;
     }
 
-    public function parseRequestHeaders()
-    {
-        $this->getRequestUri();
-        $this->getRequestMethod();
-        $this->getHttpContentType();
-        $this->getHttpCacheControl();
-    }
-
     /**
-     * Determines if required and returns the requestUri property.
-     *
-     * @return string
+     * Sets the request headers
      */
-    public function getRequestUri()
+    public function setRequestHeaders()
     {
-        if (!$this->hasRequestUri()) {
-            $this->addRequestHeaders(['requestUri' => $_SERVER['REQUEST_URI']]);
-        }
-
-        return $this->getRequestUri();
+        return $this->setRequestUri()
+                    ->setRequestMethod()
+                    ->setHttpContentType()
+                    ->setHttpCacheControl();
     }
 
-    /**
-     * Determines if required and returns the requestMethod property.
-     *
-     * @return string
-     */
-    public function getRequestMethod()
-    {
-        if (!$this->hasRequestMethod()) {
-            $this->addRequestHeaders(['requestMethod' => $_SERVER['REQUEST_METHOD']]);
-        }
-
-        return $this->getRequestMethod();
-    }
-
-    /**
-     * Determines if required and returns the httpContentType property.
-     *
-     * @return string
-     */
-    public function getHttpContentType()
-    {
-        if (!$this->hasHttpContentType()) {
-            $this->addRequestHeaders(['httpContentType' => $_SERVER['HTTP_CONTENT_TYPE']]);
-        }
-
-        return $this->getHttpContentType();
-    }
-
-    /**
-     * Determines if required and returns the httpCacheControl property.
-     *
-     * @return string
-     */
-    public function getHttpCacheControl()
-    {
-        if (!$this->hasHttpCacheControl()) {
-            $this->addRequestHeaders(['httpCacheControl '=> $_SERVER['HTTP_CACHE_CONTROL']]);
-        }
-
-        return $this->getHttpCacheControl();
-    }
 
     /**
      * Read the POST XML input and parse it as SimpleXML.
