@@ -251,7 +251,7 @@ class Object
     /**
      * Passes the handling of creating a new object to the objectmanager.
      *
-     * @param class
+     * @param $class
      * @return mixed
      * @throws \Exception
      */
@@ -263,12 +263,13 @@ class Object
     /**
      * Passes the handling of creating a singleton
      *
-     * @param $namespace
+     * @param $class
+     * @param int $id
      * @return mixed
      */
-    public function getInstance($class)
+    public function getInstance($class, $id = 0)
     {
-        return $this->objectManager->getInstance($class);
+        return $this->objectManager->getInstance($class, $id);
     }
 
     public function debug($object)
