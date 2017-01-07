@@ -4,6 +4,22 @@ namespace Object\Model;
 
 class ObjectManager
 {
+
+    /**
+     * 100
+     * Class not found.
+     */
+    const ERROR_CLASS_NOT_FOUND_CODE = '100';
+    const ERROR_CLASS_NOT_FOUND = 'Class %s does not exist!';
+
+    /**
+     * 101
+     * Double rewrite.
+     */
+    const ERROR_DOUBLE_REWRITE_CODE = '101';
+    const ERROR_DOUBLE_REWRITE = 'Double rewrite found for object %s! Rerwrite requested: %s, Rewrite found: %s.';
+
+
     /**
      * Array of singletons in the from of:
      *  array(
@@ -17,87 +33,89 @@ class ObjectManager
     private static $rewrites = array();
 
     /**
-     * Gets the class defined in $namespace, or the rewrite of this $namespace.
+     * Gets the class defined in $class, or the rewrite of this $class.
      *
-     * @param $namespace
+     * @param $class
      * @return mixed
      * @throws \Exception
      */
-    public function getNew($namespace)
+    public function getNew($class)
     {
         /**
          * Parse the namespace for rewrite and validation purposes.
          */
-        $namespace = $this->parseNamespace($namespace);
+        $class = $this->parseNamespace($class);
 
         /**
          * Return a new instance of the Object.
          */
-        return new $namespace;
+        return new $class;
     }
 
     /**
-     * Gets the singleton class defined in $namespace,
-     * or the rewrite of this $namespace.
+     * Gets the singleton class defined in $class,
+     * or the rewrite of this $class.
      *
-     * @param $namespace
+     * @param $class
      * @return mixed
      */
-    public function getSingleton($namespace)
+    public function getSingleton($class)
     {
         /**
          * Parse the namespace for rewrite and validation purposes.
          */
-        $namespace = $this->parseNamespace($namespace);
+        $class = $this->parseNamespace($class);
 
         /**
          * If the Singleton is not already set,
          * get a new instance of the singleton object, and save it in the $singletons array.
          */
-        if (!isset($this->singletons[$namespace])) {
-            $this->singletons[$namespace] = $this->getNew($namespace);
+        if (!isset($this->singletons[$class])) {
+            $this->singletons[$class] = $this->getNew($class);
         }
 
         /**
          * Return the instance of the singleton defined in the $singletons array.
          */
-        return $this->singletons[$namespace];
+        return $this->singletons[$class];
     }
 
     /**
      * Function that parses a namespace, checks for potential rewrites and return either the
      * (rewritten) namespace or an exception.
      *
-     * @param $namespace
+     * @param $class
      * @return string
      * @throws \Exception
      */
-    public function parseNamespace($namespace)
+    public function parseNamespace($class)
     {
         /**
          * Namespaces should be defined with a starting '\'.
-         * If this is not provided, add it to the namespace for convenience and singleton persistence.
+         *
+         * If this is not provided,
+         * add it to the namespace for convenience and singleton persistence.
          */
-        if (substr($namespace, 0, 1) !== '\\') {
-            $namespace = '\\' . $namespace;
+        if (substr($class, 0, 1) !== '\\') {
+            $class = '\\' . $class;
         }
 
         /**
          * Check if a rewrite is defined and return the rewritten namespace if found.
          */
-        $namespace = $this->getRewrite($namespace) ? $this->getRewrite($namespace) : $namespace;
+        $class = $this->getRewrite($class) ? $this->getRewrite($class) : $class;
 
         /**
          * If the parsed class does not exist, throw an exception to inform the user of this mishap.
          */
-        if (!class_exists($namespace)) {
+        if (!class_exists($class)) {
             throw new \Exception(
-                sprintf(\Object\Declarations::ERROR_CLASS_NOT_FOUND, $namespace),
-                \Object\Declarations::ERROR_CLASS_NOT_FOUND_CODE
+                sprintf(self::ERROR_CLASS_NOT_FOUND, $class),
+                self::ERROR_CLASS_NOT_FOUND_CODE
             );
         }
 
-        return $namespace;
+        return $class;
     }
 
     /**
@@ -116,11 +134,11 @@ class ObjectManager
         if (isset(self::$rewrites[$from])) {
             throw new \Exception(
                 sprintf(
-                    \Object\Declarations::ERROR_DOUBLE_REWRITE,
+                    self::ERROR_DOUBLE_REWRITE,
                     $from,
                     $to,
                     self::$rewrites[$from]),
-                \Object\Declarations::ERROR_DOUBLE_REWRITE_CODE
+                self::ERROR_DOUBLE_REWRITE_CODE
             );
         }
 

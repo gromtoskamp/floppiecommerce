@@ -5,6 +5,20 @@ namespace Object\Model;
 class Object
 {
 
+    /**
+     * 103
+     * Magic method undefined.
+     */
+    const ERROR_MAGIC_METHOD_UNDEFINED_CODE = '103';
+    const ERROR_MAGIC_METHOD_UNDEFINED = 'Magic method %s undefined!';
+
+    /**
+     * 105
+     * Add value not an array.
+     */
+    const ERROR_ADD_VALUE_NOT_ARRAY_CODE = '105';
+    const ERROR_ADD_VALUE_NOT_ARRAY = 'Value of %s is not an array!';
+
     const REALLY_EMPTY = '"\(シ)/"';
 
     /**
@@ -60,8 +74,8 @@ class Object
         array_unshift($arguments, lcfirst($index));
         if (!in_array($functionName, $this->magicMethods)) {
             throw new \Exception(
-                sprintf(\Object\Declarations::ERROR_MAGIC_METHOD_UNDEFINED, $name),
-                \Object\Declarations::ERROR_MAGIC_METHOD_UNDEFINED_CODE
+                sprintf(self::ERROR_MAGIC_METHOD_UNDEFINED, $name),
+                self::ERROR_MAGIC_METHOD_UNDEFINED_CODE
             );
         }
 
@@ -115,8 +129,7 @@ class Object
      * TODO: add description of this weird-ass construction.
      *
      * @param $index
-     * @param null $foo
-     * @param null $bar
+     * @param string $value
      * @return $this
      */
     public function set($index, $value = self::REALLY_EMPTY)
@@ -155,8 +168,8 @@ class Object
         $indexValue = $this->has($index) ? $this->get($index) : array();
         if (!is_array($value)) {
             throw new \Exception(
-                sprintf(\Object\Declarations::ERROR_ADD_VALUE_NOT_ARRAY, $index),
-                \Object\Declarations::ERROR_ADD_VALUE_NOT_ARRAY_CODE
+                sprintf(self::ERROR_ADD_VALUE_NOT_ARRAY, $index),
+                self::ERROR_ADD_VALUE_NOT_ARRAY_CODE
             );
         }
 

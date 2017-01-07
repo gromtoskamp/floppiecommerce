@@ -15,6 +15,13 @@ class Request extends Object
 {
 
     /**
+     * 200
+     * Request Method not found.
+     */
+    const ERROR_REQUEST_METHOD_NOT_FOUND_CODE = '200';
+    const ERROR_REQUEST_METHOD_NOT_FOUND = 'Request method %s is not supported at this moment.';
+
+    /**
      * Supported Request Methods.
      *
      * @var array
@@ -79,8 +86,8 @@ class Request extends Object
          */
         if (!in_array($_SERVER['REQUEST_METHOD'], $this->methods)) {
             throw new \Exception(
-                sprintf(\Router\Declarations::ERROR_REQUEST_METHOD_NOT_FOUND, $_SERVER['REQUEST_METHOD']),
-                \Router\Declarations::ERROR_REQUEST_METHOD_NOT_FOUND_CODE
+                sprintf(self::ERROR_REQUEST_METHOD_NOT_FOUND, $_SERVER['REQUEST_METHOD']),
+                self::ERROR_REQUEST_METHOD_NOT_FOUND_CODE
             );
         }
 

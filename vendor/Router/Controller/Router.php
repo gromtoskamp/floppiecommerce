@@ -2,6 +2,8 @@
 
 namespace Router\Controller;
 
+use Object\Model\ObjectManager;
+
 /**
  * Class Router
  *
@@ -31,7 +33,7 @@ class Router extends \Object\Model\Object
      */
     public function route()
     {
-        $request = $this->getSingleton('\Router\Model\Request');
+        $request = $this->getInstance('\Router\Model\Request');
         print_r($request);
         exit;
 
@@ -54,13 +56,13 @@ class Router extends \Object\Model\Object
          * Load the controller class and call the action on this class.
          */
         try {
-            $controller = $this->getSingleton("$module\\Controller\\$file");
+            $controller = $this->getInstance("$module\\Controller\\$file");
             $controller->$action();
         } catch (\Exception $e) {
             /**
              * If we get a class_not_found exception, redirect to 404.
              */
-            if($e->getCode() == \Object\Declarations::ERROR_CLASS_NOT_FOUND_CODE) {
+            if($e->getCode() == ObjectManager::ERROR_CLASS_NOT_FOUND_CODE) {
                 print_r('TODO: CREATE A SPECIFIC EXCEPTION');
                 if (!$this->debugRoute) {
                     $this->redirect404();
