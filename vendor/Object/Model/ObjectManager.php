@@ -79,7 +79,7 @@ class ObjectManager
         /**
          * Return the instance of the singleton defined in the $singletons array.
          */
-        return $this->singletons[$class];
+        return $this->singletons[$class][$id];
     }
 
     /**
