@@ -1,11 +1,5 @@
 <?php
 
-/**
- * How to CLI:
- *
- * TODO: write a line
- * TODO: clean a line
- */
 namespace Cli\Model;
 
 use Object\Model\Object;
