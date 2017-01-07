@@ -10,6 +10,7 @@ use Router\Model\Request;
  *
  * TODO: add 404 route.
  * TODO: add SOAP.
+ * TODO: refactor routes to take params directly.
  *
  */
 class Router extends \Object\Model\Object
@@ -64,9 +65,8 @@ class Router extends \Object\Model\Object
             /**
              * If we get a class_not_found exception, redirect to 404.
              */
-            if($e->getCode() == \Object\Declarations::ERROR_CLASS_NOT_FOUND_CODE) {
-                print_r('TODO: CREATE A SPECIFIC EXCEPTION FOR NO ROUTE FOUND.');
-                exit;
+            if($e->getCode() == ObjectManager::ERROR_CLASS_NOT_FOUND_CODE) {
+                print_r('TODO: CREATE A SPECIFIC EXCEPTION');
                 if (!$this->debugRoute) {
                     $this->redirect404();
                 }
