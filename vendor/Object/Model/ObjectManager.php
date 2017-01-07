@@ -44,7 +44,7 @@ class ObjectManager
         /**
          * Parse the namespace for rewrite and validation purposes.
          */
-        $class = $this->parseNamespace($class);
+        $class = $this->parseClassname($class);
 
         /**
          * Return a new instance of the Object.
@@ -66,7 +66,7 @@ class ObjectManager
         /**
          * Parse the namespace for rewrite and validation purposes.
          */
-        $class = $this->parseNamespace($class);
+        $class = $this->parseClassname($class);
 
         /**
          * If the Singleton is not already set,
@@ -90,7 +90,7 @@ class ObjectManager
      * @return string
      * @throws \Exception
      */
-    public function parseNamespace($class)
+    public function parseClassname($class)
     {
         /**
          * Namespaces should be defined with a starting '\'.
