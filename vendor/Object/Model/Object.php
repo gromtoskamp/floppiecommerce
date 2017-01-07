@@ -144,23 +144,14 @@ class Object
 
     /**
      * Adds a value to an array in $data.
-     * When strict is set to true, will throw an Exception if the value is not yet set already.
      *
      * @param $index
      * @param null $value
-     * @param bool $strict
      * @return $this
      * @throws \Exception
      */
     public function add($index, $value = null)
     {
-        /**
-         * If strict parameter is provided, validate if the index is present in $data.
-         */
-        if ($strict == true && !$this->has($index)) {
-            $this->validate($index);
-        }
-
         /**
          * If the value is null, create an array under $index with initial value $value.
          * If the value is not an array and not null, throw an Exception.
@@ -184,22 +175,13 @@ class Object
 
     /**
      * Resets the value of an index in $data to null.
-     * When strict is set to true, will throw an Exception if the value is not set.
      *
      * @param $index
-     * @param bool $strict
      * @return $this
      * @throws \Exception
      */
-    public function uns($index, $strict = false)
+    public function uns($index)
     {
-        /**
-         * If strict parameter is provided, validate if the index is present in $data.
-         */
-        if ($strict == true && !$this->has($index)) {
-            $this->validate($index);
-        }
-
         $this->data[$index] = null;
         return $this;
     }
@@ -265,7 +247,7 @@ class Object
      *
      * @param $class
      * @param int $id
-     * @return mixed
+     * @return \Object\Model\Object
      */
     public function getInstance($class, $id = 0)
     {
