@@ -46,7 +46,9 @@ class Request extends Object
      */
     public function requestUri()
     {
-        return $_SERVER['REQUEST_URI'];
+        return isset($_SERVER['REQUEST_URI']) ?
+            $_SERVER['REQUEST_URI'] :
+            null;
     }
 
     /**
@@ -56,7 +58,9 @@ class Request extends Object
      */
     public function requestMethod()
     {
-        return $_SERVER['REQUEST_METHOD'];
+        return isset($_SERVER['REQUEST_METHOD']) ?
+            $_SERVER['REQUEST_METHOD'] :
+            null;
     }
 
     /**
@@ -66,7 +70,9 @@ class Request extends Object
      */
     public function httpContentType()
     {
-        return $_SERVER['HTTP_CONTENT_TYPE'];
+        return isset($_SERVER['HTTP_CONTENT_TYPE']) ?
+            $_SERVER['HTTP_CONTENT_TYPE'] :
+            null;
     }
 
     /**
@@ -76,7 +82,9 @@ class Request extends Object
      */
     public function httpCacheControl()
     {
-        return $_SERVER['HTTP_CACHE_CONTROL'];
+        return isset($_SERVER['HTTP_CACHE_CONTROL']) ?
+            $_SERVER['HTTP_CACHE_CONTROL'] :
+            null;
     }
 
     /**
