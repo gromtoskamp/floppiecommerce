@@ -41,6 +41,7 @@
  */
 
 require_once './autoload.php';
+require_once './init.php';
 
 $app = new App();
 
