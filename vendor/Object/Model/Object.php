@@ -262,5 +262,31 @@ class Object
         exit;
     }
 
+    /**
+     * Uses ReflectionClass to loop through class methods.
+     * Every class method with the annotation '@builder' will be executed,
+     * and the result will be set.
+     */
+    public function build()
+    {
+        /**
+         * Get a reflectionClass of the current object.
+         */
+        $reflectionClass = new \ReflectionClass($this);
+
+        /**
+         * Loop through all functions.
+         * Every function with a @builder tag is executed as a set method.
+         */
+        foreach ($reflectionClass->getMethods()  as $method) {
+            if (strpos($method->getDocComment(), '@builder') === false) {
+                continue;
+            }
+
+            $methodName = $method->getName();
+            $this->set($methodName, $this->$methodName());
+        }
+    }
+
 
 }
