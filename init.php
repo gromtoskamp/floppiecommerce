@@ -17,7 +17,8 @@ ini_set('display_errors', '1');
  * Define global values
  */
 define('DS', DIRECTORY_SEPARATOR);
-define('BASEDIR', realpath(__DIR__ . DS . '..' . DS . '..' . DS . '..' . DS . '..' . DS  . '..'));
+define('BASEDIR', realpath(__DIR__));
+define('VENDOR', realpath(__DIR__ . DS . 'vendor'));
 
 /**
  * Scan through all module folders
