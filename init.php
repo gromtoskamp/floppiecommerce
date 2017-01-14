@@ -4,6 +4,7 @@
  * Browse through all ./vendor/ directories and load in the init.php files.
  * TODO: handle non-vendor folders.
  */
+$vendorDir = './vendor/';
 
 /**
  * Set error reporting
@@ -25,7 +26,7 @@ define('VENDOR', realpath(__DIR__ . DS . 'vendor'));
  * TODO: or use the VENDOR definition.
  */
 foreach (scandir(VENDOR) as $module) {
-    $moduleDir = VENDOR . $module . '/';
+    $moduleDir = VENDOR . DS . $module . '/';
 
     /**
      * If the folder is not . or .. , check if it has an init file.
