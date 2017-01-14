@@ -30,6 +30,13 @@ class Cli extends Object
         $this->hub = $this->getInstance(Hub::class);
     }
 
+    /**
+     * Main entry point for CLI commands.
+     * If no command is provided, this will print a welcome message
+     * and print a list of available commands and their descriptions.
+     *
+     * @throws \Exception
+     */
     public function run()
     {
         global $argv;
