@@ -1,6 +1,6 @@
 <?php
 
-namespace Filemanager\Model;
+namespace FileManager\Model;
 
 use Object\Model\Object;
 
