@@ -1,0 +1,13 @@
+<?php
+
+if (isset($_SERVER['REMOTE_ADDR'])) {
+    //TODO: handle this nicely.
+    die('only accessible through cli');
+}
+
+require_once './autoload.php';
+require_once './init.php';
+
+$cli = new \Cli\Controller\Cli();
+
+$cli->run();

@@ -1,9 +1,26 @@
 <?php
 
 namespace Object\Model;
+use Reflection\Model\Reflection;
 
 class Object
 {
+
+    /**
+     * 103
+     * Magic method undefined.
+     */
+    const ERROR_MAGIC_METHOD_UNDEFINED_CODE = '103';
+    const ERROR_MAGIC_METHOD_UNDEFINED = 'Magic method %s undefined!';
+
+    /**
+     * 105
+     * Add value not an array.
+     */
+    const ERROR_ADD_VALUE_NOT_ARRAY_CODE = '105';
+    const ERROR_ADD_VALUE_NOT_ARRAY = 'Value of %s is not an array!';
+
+    const REALLY_EMPTY = '"\(シ)/"';
 
     /**
      * @var \Object\Model\ObjectManager ObjectManager
@@ -32,11 +49,14 @@ class Object
     public function __construct()
     {
         $this->objectManager = new ObjectManager;
+        $this->addAddons();
     }
 
     /**
      * Call magic function
      * Used for getting, setting, unsetting, hassing.
+     *
+     * When addons are set, this will also the addons if this function can be called there.
      *
      * @param $name
      * @param $arguments
@@ -56,64 +76,98 @@ class Object
          * and call the requested magic method for the given arguments.
          */
         array_unshift($arguments, lcfirst($index));
-        if (!in_array($functionName, $this->magicMethods)) {
-            throw new \Exception(
-                \Object\Declarations::ERROR_MAGIC_METHOD_UNDEFINED,
-                \Object\Declarations::ERROR_MAGIC_METHOD_UNDEFINED_CODE
-            );
+        if (in_array($functionName, $this->magicMethods)) {
+            /**
+             * Return the result of the magic function.
+             */
+            return call_user_func_array(array($this, $functionName), (array) $arguments);
         }
 
         /**
-         * Return the result of the magic function.
+         * TODO: rename this function.
          */
-        return call_user_func_array(array($this, $functionName), $arguments);
+        $addonResult = $this->checkAddonsForFunctions($name, $arguments);
+        if ($addonResult) {
+            return $addonResult;
+        }
+
+        throw new \Exception(
+            sprintf(self::ERROR_MAGIC_METHOD_UNDEFINED, $name),
+            self::ERROR_MAGIC_METHOD_UNDEFINED_CODE
+        );
     }
 
     /**
-     * Returns a value magically, or false if the requested value is not set.
-     * When strict is set to true, will throw an Exception if the value is not set.
+     * Checks if any of the addons has the required function defined.
+     * If the function is found, just call it right away.
      *
-     * @param $index
-     * @param bool $strict
-     * @return mixed
-     * @throws \Exception
+     * @param $functionName
+     * @param $arguments
+     * @return bool|mixed
      */
-    public function get($index = null, $strict = false)
+    public function checkAddonsForFunctions($functionName, $arguments)
     {
+        $addons = Di::getAddons(get_class($this));
+        foreach ($addons as $name => $className) {
+            if (method_exists($this->$name, $functionName)) {
+                return call_user_func_array(array($this->$name, $functionName), (array) $arguments);
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Supermagic method alert!
+     *
+     * This magicey method will try to get the value from the data array.
+     * If this value is not present, it will try to call the provided index as a function.
+     *
+     * This function can be placed in the class of the object, where it will only
+     * need to return the value of what should be set, if nothing is set yet.
+     *
+     * @param null $index
+     * @return array|bool
+     */
+    public function get($index = null, $refresh = false)
+    {
+        /**
+         * If no index is provided, return the entire data array.
+         */
         if ($index == null) {
             return $this->data;
         }
 
         /**
-         * If strict parameter is provided, validate if the index is present in $data.
+         * If we don't already have index, check if we can generate it.
+         * If so, set it on the object, otherwise return false.
          */
-        if ($strict == true && !$this->has($index)) {
-            $this->validate($index);
+        if (!$this->has($index) || $refresh) {
+            if (method_exists($this, $index)) {
+                $this->set($index, $this->$index());
+            } else {
+                return false;
+            }
         }
 
         /**
-         * Return the set value, or false if not set.
+         * Return the index from the data array.
          */
-        return $this->has($index) ? $this->data[$index] : false;
+        return $this->data[$index];
     }
 
     /**
      * Sets the value of an index in $data.
-     * When strict is set to true, will throw an Exception if the value is not yet set already.
+     * TODO: add description of this weird-ass construction.
      *
      * @param $index
-     * @param null $value
-     * @param bool $strict
+     * @param string $value
      * @return $this
-     * @throws \Exception
      */
-    public function set($index, $value = null, $strict = false)
+    public function set($index, $value = self::REALLY_EMPTY)
     {
-        /**
-         * If strict parameter is provided, validate if the index is present in $data.
-         */
-        if ($strict == true && !$this->has($index)) {
-            $this->validate($index);
+        if ($value == self::REALLY_EMPTY) {
+            $value = method_exists($this, $index) ? $this->$index() : null;
         }
 
         $this->data[$index] = $value;
@@ -122,23 +176,14 @@ class Object
 
     /**
      * Adds a value to an array in $data.
-     * When strict is set to true, will throw an Exception if the value is not yet set already.
      *
      * @param $index
      * @param null $value
-     * @param bool $strict
      * @return $this
      * @throws \Exception
      */
-    public function add($index, $value = null, $strict = false)
+    public function add($index, $value = null)
     {
-        /**
-         * If strict parameter is provided, validate if the index is present in $data.
-         */
-        if ($strict == true && !$this->has($index)) {
-            $this->validate($index);
-        }
-
         /**
          * If the value is null, create an array under $index with initial value $value.
          * If the value is not an array and not null, throw an Exception.
@@ -146,8 +191,8 @@ class Object
         $indexValue = $this->has($index) ? $this->get($index) : array();
         if (!is_array($value)) {
             throw new \Exception(
-                sprintf(\Object\Declarations::ERROR_ADD_VALUE_NOT_ARRAY, $index),
-                \Object\Declarations::ERROR_ADD_VALUE_NOT_ARRAY_CODE
+                sprintf(self::ERROR_ADD_VALUE_NOT_ARRAY, $index),
+                self::ERROR_ADD_VALUE_NOT_ARRAY_CODE
             );
         }
 
@@ -162,22 +207,13 @@ class Object
 
     /**
      * Resets the value of an index in $data to null.
-     * When strict is set to true, will throw an Exception if the value is not set.
      *
      * @param $index
-     * @param bool $strict
      * @return $this
      * @throws \Exception
      */
-    public function uns($index, $strict = false)
+    public function uns($index)
     {
-        /**
-         * If strict parameter is provided, validate if the index is present in $data.
-         */
-        if ($strict == true && !$this->has($index)) {
-            $this->validate($index);
-        }
-
         $this->data[$index] = null;
         return $this;
     }
@@ -190,10 +226,18 @@ class Object
      */
     public function has($index)
     {
+        /**
+         * If provided with an array,
+         * check recursively if we can find the next index
+         * as a child of the current index.
+         */
         if (is_array($index)) {
             return $this->hasRecursive($index);
         }
 
+        /**
+         * Otherwise just check if is set.
+         */
         return isset($this->data[$index]);
     }
 
@@ -219,43 +263,27 @@ class Object
     }
 
     /**
-     * Throw an Exception if index is not set in $data.
-     *
-     * @param $index
-     * @throws \Exception
-     */
-    public function validate($index)
-    {
-        $message = sprintf(\Object\Declarations::ERROR_STRICT_MAGIC_FUNCTION, $index) . PHP_EOL .
-            implode(' -=- ', array_keys($this->data));
-
-        throw new \Exception(
-            $message,
-            \Object\Declarations::ERROR_STRICT_MAGIC_FUNCTION_CALL_CODE
-        );
-    }
-
-    /**
      * Passes the handling of creating a new object to the objectmanager.
      *
-     * @param $namespace
+     * @param $class
      * @return mixed
      * @throws \Exception
      */
-    public function getNew($namespace)
+    public function create($class)
     {
-        return $this->objectManager->getNew($namespace);
+        return $this->objectManager->create($class);
     }
 
     /**
      * Passes the handling of creating a singleton
      *
-     * @param $namespace
-     * @return mixed
+     * @param $class
+     * @param int $id
+     * @return \Object\Model\Object
      */
-    public function getSingleton($namespace)
+    public function getInstance($class, $id = 0)
     {
-        return $this->objectManager->getSingleton($namespace);
+        return $this->objectManager->getInstance($class, $id);
     }
 
     public function debug($object)
@@ -264,6 +292,54 @@ class Object
         echo '<pre>';
         print_r($object);
         exit;
+    }
+
+    /**
+     * Uses ReflectionClass to loop through class methods.
+     * Every class method with the annotation '@builder' will be executed,
+     * and the result will be set.
+     */
+    public function build()
+    {
+        /**
+         * Get a reflectionClass of the current object.
+         */
+        $reflectionClass = new Reflection($this);
+
+        /**
+         * Loop through all functions.
+         * Every function with a @builder tag is executed as a set method.
+         */
+        foreach ($reflectionClass->getMethods()  as $method) {
+            if (strpos($method->getDocComment(), '@builder') === false) {
+                continue;
+            }
+
+            $methodName = $method->getName();
+            $this->set($methodName, $this->$methodName());
+        }
+    }
+
+    /**
+     * Adds the addons as an indexed list of properties.
+     * The addon magic will know how to call the functions.
+     */
+    public function addAddons()
+    {
+        foreach ($this->getAddonClasses() as $name => $class)
+        {
+            $this->$name = $this->create($class);
+        }
+    }
+
+    /**
+     * Gets all Addons for a given class.
+     *
+     * @return array
+     */
+    public function getAddonClasses()
+    {
+        return Di::getAddons(get_class($this));
     }
 
 
