@@ -1,6 +1,7 @@
 <?php
 
 namespace Object\Model;
+use Reflection\Model\Reflection;
 
 class Object
 {
@@ -48,11 +49,14 @@ class Object
     public function __construct()
     {
         $this->objectManager = new ObjectManager;
+        $this->addAddons();
     }
 
     /**
      * Call magic function
      * Used for getting, setting, unsetting, hassing.
+     *
+     * When addons are set, this will also the addons if this function can be called there.
      *
      * @param $name
      * @param $arguments
@@ -72,17 +76,45 @@ class Object
          * and call the requested magic method for the given arguments.
          */
         array_unshift($arguments, lcfirst($index));
-        if (!in_array($functionName, $this->magicMethods)) {
-            throw new \Exception(
-                sprintf(self::ERROR_MAGIC_METHOD_UNDEFINED, $name),
-                self::ERROR_MAGIC_METHOD_UNDEFINED_CODE
-            );
+        if (in_array($functionName, $this->magicMethods)) {
+            /**
+             * Return the result of the magic function.
+             */
+            return call_user_func_array(array($this, $functionName), (array) $arguments);
         }
 
         /**
-         * Return the result of the magic function.
+         * TODO: rename this function.
          */
-        return call_user_func_array(array($this, $functionName), $arguments);
+        $addonResult = $this->checkAddonsForFunctions($name, $arguments);
+        if ($addonResult) {
+            return $addonResult;
+        }
+
+        throw new \Exception(
+            sprintf(self::ERROR_MAGIC_METHOD_UNDEFINED, $name),
+            self::ERROR_MAGIC_METHOD_UNDEFINED_CODE
+        );
+    }
+
+    /**
+     * Checks if any of the addons has the required function defined.
+     * If the function is found, just call it right away.
+     *
+     * @param $functionName
+     * @param $arguments
+     * @return bool|mixed
+     */
+    public function checkAddonsForFunctions($functionName, $arguments)
+    {
+        $addons = Di::getAddons(get_class($this));
+        foreach ($addons as $name => $className) {
+            if (method_exists($this->$name, $functionName)) {
+                return call_user_func_array(array($this->$name, $functionName), (array) $arguments);
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -272,7 +304,7 @@ class Object
         /**
          * Get a reflectionClass of the current object.
          */
-        $reflectionClass = new \ReflectionClass($this);
+        $reflectionClass = new Reflection($this);
 
         /**
          * Loop through all functions.
@@ -286,6 +318,28 @@ class Object
             $methodName = $method->getName();
             $this->set($methodName, $this->$methodName());
         }
+    }
+
+    /**
+     * Adds the addons as an indexed list of properties.
+     * The addon magic will know how to call the functions.
+     */
+    public function addAddons()
+    {
+        foreach ($this->getAddonClasses() as $name => $class)
+        {
+            $this->$name = $this->create($class);
+        }
+    }
+
+    /**
+     * Gets all Addons for a given class.
+     *
+     * @return array
+     */
+    public function getAddonClasses()
+    {
+        return Di::getAddons(get_class($this));
     }
 
 
