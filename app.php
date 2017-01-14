@@ -1,5 +1,4 @@
 <?php
-
 /**
  * Welcome to Floppiecommerce!
  *
@@ -55,7 +54,7 @@ class App
 
     private static $debugger = true;
 
-    /**
+     /**
      * App constructor.
      */
     public function __construct()
@@ -130,11 +129,6 @@ class App
     public static function registry($key)
     {
         return isset(self::$registry[$key]) ? self::$registry[$key] : false;
-    }
-
-    public static function rewrite($from, $to)
-    {
-        \Object\Model\ObjectManager::setRewrite($from, $to);
     }
 
     /**
