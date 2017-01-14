@@ -4,7 +4,6 @@
  * Browse through all ./vendor/ directories and load in the init.php files.
  * TODO: handle non-vendor folders.
  */
-$vendorDir = './vendor/';
 
 /**
  * Set error reporting
@@ -22,9 +21,11 @@ define('VENDOR', realpath(__DIR__ . DS . 'vendor'));
 
 /**
  * Scan through all module folders
+ * TODO: use either the filemanager,
+ * TODO: or use the VENDOR definition.
  */
-foreach (scandir($vendorDir) as $module) {
-    $moduleDir = $vendorDir . $module . '/';
+foreach (scandir(VENDOR) as $module) {
+    $moduleDir = VENDOR . $module . '/';
 
     /**
      * If the folder is not . or .. , check if it has an init file.
@@ -33,6 +34,10 @@ foreach (scandir($vendorDir) as $module) {
      */
     if ((strpos($module, '.') !== 0) && is_dir($moduleDir)) {
         $initFilePath = $moduleDir . 'init.php';
-        file_exists($initFilePath);
+        if(file_exists($initFilePath))
+        {
+            require_once($initFilePath);
+        }
+
     }
 }
