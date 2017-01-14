@@ -144,23 +144,14 @@ class Object
 
     /**
      * Adds a value to an array in $data.
-     * When strict is set to true, will throw an Exception if the value is not yet set already.
      *
      * @param $index
      * @param null $value
-     * @param bool $strict
      * @return $this
      * @throws \Exception
      */
     public function add($index, $value = null)
     {
-        /**
-         * If strict parameter is provided, validate if the index is present in $data.
-         */
-        if ($strict == true && !$this->has($index)) {
-            $this->validate($index);
-        }
-
         /**
          * If the value is null, create an array under $index with initial value $value.
          * If the value is not an array and not null, throw an Exception.
@@ -184,22 +175,13 @@ class Object
 
     /**
      * Resets the value of an index in $data to null.
-     * When strict is set to true, will throw an Exception if the value is not set.
      *
      * @param $index
-     * @param bool $strict
      * @return $this
      * @throws \Exception
      */
-    public function uns($index, $strict = false)
+    public function uns($index)
     {
-        /**
-         * If strict parameter is provided, validate if the index is present in $data.
-         */
-        if ($strict == true && !$this->has($index)) {
-            $this->validate($index);
-        }
-
         $this->data[$index] = null;
         return $this;
     }
@@ -251,7 +233,7 @@ class Object
     /**
      * Passes the handling of creating a new object to the objectmanager.
      *
-     * @param class
+     * @param $class
      * @return mixed
      * @throws \Exception
      */
@@ -263,12 +245,13 @@ class Object
     /**
      * Passes the handling of creating a singleton
      *
-     * @param $namespace
-     * @return mixed
+     * @param $class
+     * @param int $id
+     * @return \Object\Model\Object
      */
-    public function getInstance($class)
+    public function getInstance($class, $id = 0)
     {
-        return $this->objectManager->getInstance($class);
+        return $this->objectManager->getInstance($class, $id);
     }
 
     public function debug($object)
@@ -277,6 +260,32 @@ class Object
         echo '<pre>';
         print_r($object);
         exit;
+    }
+
+    /**
+     * Uses ReflectionClass to loop through class methods.
+     * Every class method with the annotation '@builder' will be executed,
+     * and the result will be set.
+     */
+    public function build()
+    {
+        /**
+         * Get a reflectionClass of the current object.
+         */
+        $reflectionClass = new \ReflectionClass($this);
+
+        /**
+         * Loop through all functions.
+         * Every function with a @builder tag is executed as a set method.
+         */
+        foreach ($reflectionClass->getMethods()  as $method) {
+            if (strpos($method->getDocComment(), '@builder') === false) {
+                continue;
+            }
+
+            $methodName = $method->getName();
+            $this->set($methodName, $this->$methodName());
+        }
     }
 
 
