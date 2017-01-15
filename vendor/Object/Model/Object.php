@@ -86,15 +86,16 @@ class Object
         /**
          * TODO: rename this function.
          */
-        $addonResult = $this->checkAddonsForFunctions($name, $arguments);
-        if ($addonResult) {
-            return $addonResult;
-        }
+        $result = $this->tryAddons($name, $arguments);
+        if ($result !== self::REALLY_EMPTY)
+            return ($result);
+
 
         throw new \Exception(
             sprintf(self::ERROR_MAGIC_METHOD_UNDEFINED, $name),
             self::ERROR_MAGIC_METHOD_UNDEFINED_CODE
         );
+
     }
 
     /**
@@ -105,7 +106,7 @@ class Object
      * @param $arguments
      * @return bool|mixed
      */
-    public function checkAddonsForFunctions($functionName, $arguments)
+    public function tryAddons($functionName, $arguments)
     {
         $addons = Di::getAddons(get_class($this));
         foreach ($addons as $name => $className) {
@@ -114,7 +115,7 @@ class Object
             }
         }
 
-        return false;
+        return self::REALLY_EMPTY;
     }
 
     /**
