@@ -16,16 +16,6 @@ use Router\Model\Request;
 class Router extends \Object\Model\Object
 {
 
-    /**
-     * TODO: decide what to do with this.
-     *  This could be used for debugging.
-     *  This could be used for a general developer/production mode switch.
-     *  This could be removed altogether.
-     *
-     * @var bool
-     */
-    protected $debugRoute = true;
-
     public $request;
 
     /**
@@ -67,7 +57,7 @@ class Router extends \Object\Model\Object
              */
             if($e->getCode() == ObjectManager::ERROR_CLASS_NOT_FOUND_CODE) {
                 print_r('TODO: CREATE A SPECIFIC EXCEPTION');
-                if (!$this->debugRoute) {
+                if (!\App::$debug) {
                     $this->redirect404();
                 }
             }
