@@ -1,8 +1,7 @@
 <?php
 
 if (isset($_SERVER['REMOTE_ADDR'])) {
-    //TODO: handle this nicely.
-    die('only accessible through cli');
+    throw new \Exception('Cli is only accessible through, well, cli. Døh');
 }
 
 require_once './autoload.php';
