@@ -286,14 +286,6 @@ class Object
         return $this->objectManager->getInstance($class, $id);
     }
 
-    public function debug($object)
-    {
-        //TODO: REMOVE THIS
-        echo '<pre>';
-        print_r($object);
-        exit;
-    }
-
     /**
      * Uses ReflectionClass to loop through class methods.
      * Every class method with the annotation '@builder' will be executed,
