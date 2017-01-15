@@ -1,6 +1,7 @@
 <?php
 
 namespace Object\Model;
+use FileManager\Model\FileManager;
 use Reflection\Model\Reflection;
 
 class Di
@@ -30,9 +31,6 @@ class Di
 
     private static $rewrites = array();
 
-    //TODO: centralize debug.
-    private static $debug = true;
-
     /**
      * @param $base
      * @param $addon
@@ -41,7 +39,7 @@ class Di
     public static function setAddon($base, $addon)
     {
         $base = self::parseClassname($base);
-        if (self::$debug) {
+        if (\App::$debug) {
             self::validateAddon($base, $addon);
         }
         self::$addons[$base][] = $addon;
@@ -167,10 +165,16 @@ class Di
         /**
          * If the parsed class does not exist, throw an exception to inform the user of this mishap.
          */
-        if (!class_exists($class)) {
+        try {
+            class_exists($class);
+        } catch (\Exception $e) {
             throw new \Exception(
-                sprintf(self::ERROR_CLASS_NOT_FOUND, $class),
-                self::ERROR_CLASS_NOT_FOUND_CODE
+                sprintf(
+                    self::ERROR_CLASS_NOT_FOUND,
+                    $class
+                ),
+                self::ERROR_CLASS_NOT_FOUND_CODE,
+                $e
             );
         }
 
