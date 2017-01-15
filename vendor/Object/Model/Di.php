@@ -30,9 +30,6 @@ class Di
 
     private static $rewrites = array();
 
-    //TODO: centralize debug.
-    private static $debug = true;
-
     /**
      * @param $base
      * @param $addon
@@ -41,7 +38,7 @@ class Di
     public static function setAddon($base, $addon)
     {
         $base = self::parseClassname($base);
-        if (self::$debug) {
+        if (\App::$debug) {
             self::validateAddon($base, $addon);
         }
         self::$addons[$base][] = $addon;
