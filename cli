@@ -1,12 +1,21 @@
 <?php
+try {
 
-if (isset($_SERVER['REMOTE_ADDR'])) {
-    throw new \Exception('Cli is only accessible through, well, cli. Døh');
+    if (isset($_SERVER['REMOTE_ADDR'])) {
+        throw new \Exception('Cli is only accessible through, well, cli. Døh');
+    }
+    require_once './autoload.php';
+    require_once './init.php';
+
+    $cli = new \Cli\Controller\Cli();
+    $cli->run();
+
+} catch (\Exception $e) {
+    do {
+        echo 'ERROR:    ' . $e->getCode() . PHP_EOL;
+        echo 'MESSAGE:  ' . $e->getMessage() . PHP_EOL;
+        echo 'TRACE:    ' . PHP_EOL . $e->getTraceAsString() . PHP_EOL;
+        echo $e->getPrevious() ? PHP_EOL . 'PREVIOUS:' . PHP_EOL : null;
+    }
+    while ($e = $e->getPrevious());
 }
-
-require_once './autoload.php';
-require_once './init.php';
-
-$cli = new \Cli\Controller\Cli();
-
-$cli->run();

@@ -27,10 +27,15 @@ class App
         try {
             $router->route();
         } catch (\Exception $e) {
-            //TODO: Create an actual general exception handler.
-            echo '<pre>';
-            print_r($e);
-            exit;
+            //TODO: clean this up for browser.
+            do {
+                echo 'ERROR:    ' . $e->getCode() . PHP_EOL;
+                echo 'MESSAGE:  ' . $e->getMessage() . PHP_EOL;
+                echo 'TRACE:    ' . PHP_EOL . $e->getTraceAsString() . PHP_EOL;
+                echo $e->getPrevious() ? PHP_EOL . 'PREVIOUS:' . PHP_EOL : null;
+            }
+            /** Woop woop recursion! */
+            while ($e = $e->getPrevious());
         }
     }
 
