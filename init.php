@@ -20,11 +20,6 @@ define('DS', DIRECTORY_SEPARATOR);
 define('BASEDIR', realpath(__DIR__));
 define('VENDOR', realpath(__DIR__ . DS . 'vendor'));
 
-/**
- * Scan through all module folders
- * TODO: use either the filemanager,
- * TODO: or use the VENDOR definition.
- */
 foreach (scandir(VENDOR) as $module) {
     $moduleDir = VENDOR . DS . $module . '/';
 
