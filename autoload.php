@@ -12,7 +12,7 @@ spl_autoload_register( 'autoload' );
  */
 function autoload( $class, $dir = null )
 {
-    $roots = [VENDOR, APP];
+    $roots = [VENDOR, APP, BASEDIR];
     foreach ($roots as $root) {
         $path = $root . DS . str_replace('\\', '/', $class) . '.php';
         if(file_exists($path)) {
