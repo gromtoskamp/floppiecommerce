@@ -72,6 +72,13 @@ class Object
         $index = substr($name, 3);
 
         /**
+         * Try if one of the addons has this function.
+         */
+        $result = $this->tryAddons($name, $arguments);
+        if ($result !== self::REALLY_EMPTY)
+            return ($result);
+
+        /**
          * Put the index at the beginning of the argument list,
          * and call the requested magic method for the given arguments.
          */
@@ -82,14 +89,6 @@ class Object
              */
             return call_user_func_array(array($this, $functionName), (array) $arguments);
         }
-
-        /**
-         * Try if one of the addons has this function.
-         */
-        $result = $this->tryAddons($name, $arguments);
-        if ($result !== self::REALLY_EMPTY)
-            return ($result);
-
 
         throw new \Exception(
             sprintf(self::ERROR_MAGIC_METHOD_UNDEFINED, $name),
