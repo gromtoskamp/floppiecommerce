@@ -84,7 +84,7 @@ class Object
         }
 
         /**
-         * TODO: rename this function.
+         * Try if one of the addons has this function.
          */
         $result = $this->tryAddons($name, $arguments);
         if ($result !== self::REALLY_EMPTY)
