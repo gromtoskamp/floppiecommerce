@@ -2,7 +2,6 @@
 
 /**
  * Browse through all ./vendor/ directories and load in the init.php files.
- * TODO: handle non-vendor folders.
  */
 $vendorDir = './vendor/';
 
@@ -19,20 +18,11 @@ ini_set('display_errors', '1');
 define('DS', DIRECTORY_SEPARATOR);
 define('BASEDIR', realpath(__DIR__));
 define('VENDOR', realpath(__DIR__ . DS . 'vendor'));
+define('APP', realpath(__DIR__ . DS . 'app'));
 
 /**
- * Scan through all module folders
+ * Include all init.php files
  */
-foreach (scandir($vendorDir) as $module) {
-    $moduleDir = $vendorDir . $module . '/';
-
-    /**
-     * If the folder is not . or .. , check if it has an init file.
-     * file_exists also executes the file, therefore no require_once is needed.
-     * This is because of the autoloader.
-     */
-    if ((strpos($module, '.') !== 0) && is_dir($moduleDir)) {
-        $initFilePath = $moduleDir . 'init.php';
-        file_exists($initFilePath);
-    }
+foreach (glob('*' . DS . '*' . DS . 'init.php') as $initFile) {
+    include $initFile;
 }
